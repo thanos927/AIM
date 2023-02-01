@@ -1,0 +1,62 @@
+import random
+
+# Initialize the grid square
+grid = [[0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0]]
+
+# Initialize the rewards (tank) and shocks (boat)
+rewards = [(4, 4), (0, 2)]
+shocks = [(2, 2)]
+
+# Set initial position of the agent
+curr_x = 0
+curr_y = 0
+
+# Keep track of steps taken
+steps = 0
+
+# Keep track of path taken
+path = []
+
+while len(rewards) + len(shocks) > 0:
+    steps += 1
+    path.append((curr_x, curr_y))
+
+    # Get list of all possible moves
+    moves = []
+    if curr_x > 0:
+        moves.append((curr_x - 1, curr_y))
+    if curr_x < 4:
+        moves.append((curr_x + 1, curr_y))
+    if curr_y > 0:
+        moves.append((curr_x, curr_y - 1))
+    if curr_y < 4:
+        moves.append((curr_x, curr_y + 1))
+
+    # Calculate free energy for each move
+    free_energies = []
+    for move in moves:
+        free_energy = 0
+        if move in rewards:
+            free_energy -= 1
+        elif move in shocks:
+            free_energy += 1
+        free_energies.append(free_energy)
+
+    # Select move with lowest free energy
+    min_index = free_energies.index(min(free_energies))
+    curr_x, curr_y = moves[min_index]
+
+    # Remove reward or shock if agent reaches it
+    if (curr_x, curr_y) in rewards:
+        rewards.remove((curr_x, curr_y))
+    elif (curr_x, curr_y) in shocks:
+        shocks.remove((curr_x, curr_y))
+
+# Print out the path taken by the agent
+print("Step\tX\tY")
+for i, (x, y) in enumerate(path):
+    print(f"{i+1}\t{x}\t{y}")
